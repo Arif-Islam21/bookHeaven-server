@@ -9,8 +9,6 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 app.use(express.json());
 app.use(cors());
 
-// bookHeaven WLeRGOQFEh8UYxuE
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.knlt5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -28,8 +26,17 @@ async function run() {
     // await client.connect();
     // Send a ping to confirm a successful connection
 
+    const booksCollection = client.db("bookHeaven").collection("books");
+
     app.get("/", (req, res) => {
       res.send("Book Is On the way");
+    });
+
+    // post add book data to the server
+    app.post("/addBook", async (req, res) => {
+      const data = req.body;
+      const result = await booksCollection.insertOne(data);
+      res.send(result);
     });
 
     await client.db("admin").command({ ping: 1 });
