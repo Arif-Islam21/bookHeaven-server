@@ -27,6 +27,7 @@ async function run() {
     // Send a ping to confirm a successful connection
 
     const booksCollection = client.db("bookHeaven").collection("books");
+    const categoryCollection = client.db("bookHeaven").collection("category");
 
     app.get("/", (req, res) => {
       res.send("Book Is On the way");
@@ -37,10 +38,17 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/bookCategory/:category", async (req, res) => {
+      const bookCategory = req.params.category;
+      const query = { category: bookCategory };
+      const result = await categoryCollection.find(query).toArray();
+      res.send(result);
+    });
+
     // post add book data to the server
     app.post("/addBook", async (req, res) => {
       const data = req.body;
-      const result = await booksCollection.insertOne(data);
+      const result = await categoryCollection.insertOne(data);
       res.send(result);
     });
 
