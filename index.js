@@ -32,6 +32,11 @@ async function run() {
       res.send("Book Is On the way");
     });
 
+    app.get("/addedBooks", async (req, res) => {
+      const result = await booksCollection.find().toArray();
+      res.send(result);
+    });
+
     // post add book data to the server
     app.post("/addBook", async (req, res) => {
       const data = req.body;
