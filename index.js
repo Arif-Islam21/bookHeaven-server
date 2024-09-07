@@ -55,8 +55,14 @@ async function run() {
     app.patch("/borrow/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      const quantity = parseInt(req.body);
-      const updatedDoc = { $inc: { quantity: -1 } };
+      // const quantity = parseInt(req.body);
+
+      const updatedDoc = {
+        $inc: {
+          quantity: -1,
+          "metrics.orders": 1,
+        },
+      };
       const result = await categoryCollection.updateOne(query, updatedDoc);
       res.send(result);
     });
@@ -64,6 +70,10 @@ async function run() {
     // post add book data to the server
     app.post("/addBook", async (req, res) => {
       const data = req.body;
+      if (typeof data.quantity === "string") {
+        data.quantity = parseInt(data.quantity);
+      }
+      console.log(data);
       const result = await categoryCollection.insertOne(data);
       res.send(result);
     });
