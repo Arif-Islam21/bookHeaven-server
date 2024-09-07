@@ -52,10 +52,11 @@ async function run() {
     });
 
     // borrow a book from the library
-    app.patch("/borrow/:id", async (req, res) => {
+    app.post("/borrow/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      // const quantity = parseInt(req.body);
+      const borrowData = req.body;
+      console.log(borrowData);
 
       const updatedDoc = {
         $inc: {
