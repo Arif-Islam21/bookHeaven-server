@@ -60,6 +60,11 @@ async function run() {
       // console.log(borrowData);
       const borrowResult = await borrowCollection.insertOne(borrowData);
 
+      const bookQuantity = await categoryCollection.findOne(query);
+      // console.log(bookQuantity);
+      if (bookQuantity.quantity <= 0) {
+        return res.send({ message: "No Books Available" });
+      }
       const updatedDoc = {
         $inc: {
           quantity: -1,
