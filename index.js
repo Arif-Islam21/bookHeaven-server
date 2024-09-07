@@ -28,6 +28,7 @@ async function run() {
 
     const booksCollection = client.db("bookHeaven").collection("books");
     const categoryCollection = client.db("bookHeaven").collection("category");
+    const borrowCollection = client.db("bookHeaven").collection("borrow");
 
     app.get("/", (req, res) => {
       res.send("Book Is On the way");
@@ -56,7 +57,8 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const borrowData = req.body;
-      console.log(borrowData);
+      // console.log(borrowData);
+      const borrowResult = await borrowCollection.insertOne(borrowData);
 
       const updatedDoc = {
         $inc: {
@@ -65,7 +67,7 @@ async function run() {
         },
       };
       const result = await categoryCollection.updateOne(query, updatedDoc);
-      res.send(result);
+      res.send({ result, borrowResult });
     });
 
     // post add book data to the server
