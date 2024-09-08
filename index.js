@@ -98,7 +98,27 @@ async function run() {
       res.send(result);
     });
 
-    await client.db("admin").command({ ping: 1 });
+    // return the book
+    app.post("/return/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+
+      const updatedDoc = {
+        $inc: {
+          quantity: 1,
+          "metrics.orders": 1,
+        },
+      };
+
+      const deleteResult = await borrowCollection.deleteOne(query);
+      const incrementResult = await categoryCollection.updateOne(
+        query,
+        updatedDoc
+      );
+      res.send({ deleteResult, incrementResult });
+    });
+
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
