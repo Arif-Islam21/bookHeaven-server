@@ -52,6 +52,18 @@ async function run() {
       res.send(result);
     });
 
+    // show borrowed book list
+    app.get("/borrowedBook", async (req, res) => {
+      const result = await borrowCollection.find().toArray();
+      res.send(result);
+    });
+    app.get("/borrowedBook/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await borrowCollection.find(query).toArray();
+      res.send(result);
+    });
+
     // borrow a book from the library
     app.post("/borrow/:id", async (req, res) => {
       const id = req.params.id;
