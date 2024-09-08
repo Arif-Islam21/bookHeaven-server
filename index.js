@@ -34,6 +34,12 @@ async function run() {
       res.send("Book Is On the way");
     });
 
+    // find all the books of category collection
+    app.get("/allBooks", async (req, res) => {
+      const result = await categoryCollection.find().toArray();
+      res.send(result);
+    });
+
     app.get("/addedBooks", async (req, res) => {
       const result = await booksCollection.find().toArray();
       res.send(result);
