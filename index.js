@@ -110,12 +110,24 @@ async function run() {
         },
       };
 
-      const deleteResult = await borrowCollection.deleteOne(query);
+      // const deleteResult = await borrowCollection.deleteOne(query);
       const incrementResult = await categoryCollection.updateOne(
         query,
         updatedDoc
       );
-      res.send({ deleteResult, incrementResult });
+      res.send({ incrementResult });
+    });
+
+    app.patch("/increment/:bookName", async (req, res) => {
+      const bookName = req.params.bookName;
+      const query = { bookName: bookName };
+      const updatedDoc = {
+        $inc: {
+          quantity: 1,
+        },
+      };
+      const result = await categoryCollection.updateOne(query, updatedDoc);
+      res.send(result);
     });
 
     // await client.db("admin").command({ ping: 1 });
