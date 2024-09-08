@@ -99,28 +99,18 @@ async function run() {
     });
 
     // return the book
-    app.post("/return/:id", async (req, res) => {
+    app.delete("/return/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-
-      const updatedDoc = {
-        $inc: {
-          quantity: 1,
-          "metrics.orders": 1,
-        },
-      };
-
-      // const deleteResult = await borrowCollection.deleteOne(query);
-      const incrementResult = await categoryCollection.updateOne(
-        query,
-        updatedDoc
-      );
-      res.send({ incrementResult });
+      const deleteResult = await borrowCollection.deleteOne(query);
+      res.send(deleteResult);
     });
 
     app.patch("/increment/:bookName", async (req, res) => {
       const bookName = req.params.bookName;
-      const query = { bookName: bookName };
+      const author = req.body.author;
+      const query = { bookName: bookName, author: author };
+
       const updatedDoc = {
         $inc: {
           quantity: 1,
