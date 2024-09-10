@@ -99,6 +99,22 @@ async function run() {
       const data = req.body;
       const query = { _id: new ObjectId(id) };
       const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          author: data.author,
+          bookName: data.bookName,
+          category: data.category,
+          photo: data.photo,
+          rating: data.rating,
+        },
+      };
+
+      const result = await categoryCollection.updateOne(
+        query,
+        updatedDoc,
+        options
+      );
+      res.send(result);
     });
 
     // post add book data to the server
