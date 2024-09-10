@@ -93,6 +93,14 @@ async function run() {
       res.send({ result, borrowResult });
     });
 
+    // update a book
+    app.post("/updateBook/:id", async (req, res) => {
+      const id = req.params.id;
+      const data = req.body;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+    });
+
     // post add book data to the server
     app.post("/addBook", async (req, res) => {
       const data = req.body;
