@@ -6,8 +6,12 @@ const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 // middleware
+const corsOption = {
+  origin: ["http://localhost:5173", "http://192.168.0.104:5173"],
+};
+
+app.use(cors(corsOption));
 app.use(express.json());
-app.use(cors());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.knlt5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
