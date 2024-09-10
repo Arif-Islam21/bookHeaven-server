@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 const port = process.env.PORT || 3000;
 require("dotenv").config();
 const app = express();
@@ -36,6 +37,11 @@ async function run() {
     const booksCollection = client.db("bookHeaven").collection("books");
     const categoryCollection = client.db("bookHeaven").collection("category");
     const borrowCollection = client.db("bookHeaven").collection("borrow");
+
+    // app.post('/jwt', async(req, res) => {
+    //   const email = req.body.email,
+    //   const token = jwt.sign()
+    // })
 
     app.get("/", (req, res) => {
       res.send("Book Is On the way");
