@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 const port = process.env.PORT || 3000;
 require("dotenv").config();
 const app = express();
@@ -16,6 +17,25 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
+// custom middleware
+const verifyToken = async (req, res, next) => {
+  const token = req.cookies?.token;
+  if (!token) {
+    return res.status(401).send({ message: "Unauthorized access" });
+  }
+  if (token) {
+    jwt.verify(token, process.env.TOKEN_SECRET_KEY, (err, decoded) => {
+      if (err) {
+        console.log(err);
+        return res.status(401).send({ message: "Unauthorized access" });
+      }
+      console.log(decoded);
+      req.user = decoded;
+      next();
+    });
+  }
+};
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.knlt5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -44,7 +64,13 @@ async function run() {
       const token = jwt.sign({ email }, process.env.TOKEN_SECRET_KEY, {
         expiresIn: "1h",
       });
-      console.log(token);
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+        })
+        .send({ success: true });
     });
 
     app.get("/", (req, res) => {
@@ -52,7 +78,7 @@ async function run() {
     });
 
     // find all the books of category collection
-    app.get("/allBooks", async (req, res) => {
+    app.get("/allBooks", verifyToken, async (req, res) => {
       const result = await categoryCollection.find().toArray();
       res.send(result);
     });
