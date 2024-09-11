@@ -40,11 +40,11 @@ async function run() {
 
     app.post("/jwt", async (req, res) => {
       const email = req.body.email;
-      console.log(email);
-      // const token = jwt.sign(email, process.env.TOKEN_SECRET_KEY, {
-      //   expiresIn: "1h",
-      // });
-      // console.log(token);
+      console.log(typeof email);
+      const token = jwt.sign({ email }, process.env.TOKEN_SECRET_KEY, {
+        expiresIn: "1h",
+      });
+      console.log(token);
     });
 
     app.get("/", (req, res) => {
