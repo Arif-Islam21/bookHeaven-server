@@ -11,11 +11,11 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const corsOptions = {
   origin: [
     "http://localhost:5173",
+    "http://localhost:5174",
+    "http://192.168.0.104:5173",
     "https://bookheaven-914d3.web.app",
     "https://bookheaven-914d3.firebaseapp.com",
   ],
-  // origin: "*",
-  credentials: true,
   optionSuccessStatus: 200,
 };
 
@@ -23,23 +23,23 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 // custom middleware
-const verifyToken = async (req, res, next) => {
-  const token = req.cookies?.token;
-  if (!token) {
-    return res.status(401).send({ message: "Unauthorized access" });
-  }
-  if (token) {
-    jwt.verify(token, process.env.TOKEN_SECRET_KEY, (err, decoded) => {
-      if (err) {
-        console.log(err);
-        return res.status(401).send({ message: "Unauthorized access" });
-      }
-      console.log(decoded);
-      req.user = decoded;
-      next();
-    });
-  }
-};
+// const verifyToken = async (req, res, next) => {
+//   const token = req.cookies?.token;
+//   if (!token) {
+//     return res.status(401).send({ message: "Unauthorized access" });
+//   }
+//   if (token) {
+//     jwt.verify(token, process.env.TOKEN_SECRET_KEY, (err, decoded) => {
+//       if (err) {
+//         console.log(err);
+//         return res.status(401).send({ message: "Unauthorized access" });
+//       }
+//       console.log(decoded);
+//       req.user = decoded;
+//       next();
+//     });
+//   }
+// };
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.knlt5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -62,27 +62,27 @@ async function run() {
     const categoryCollection = client.db("bookHeaven").collection("category");
     const borrowCollection = client.db("bookHeaven").collection("borrow");
 
-    app.post("/jwt", async (req, res) => {
-      const email = req.body.email;
-      console.log(typeof email);
-      const token = jwt.sign({ email }, process.env.TOKEN_SECRET_KEY, {
-        expiresIn: "1h",
-      });
-      res
-        .cookie("token", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-        })
-        .send({ success: true });
-    });
+    // app.post("/jwt", async (req, res) => {
+    //   const email = req.body.email;
+    //   console.log(typeof email);
+    //   const token = jwt.sign({ email }, process.env.TOKEN_SECRET_KEY, {
+    //     expiresIn: "1h",
+    //   });
+    //   res
+    //     .cookie("token", token, {
+    //       httpOnly: true,
+    //       secure: process.env.NODE_ENV === "production",
+    //       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    //     })
+    //     .send({ success: true });
+    // });
 
     app.get("/", (req, res) => {
       res.send("Book Is On the way");
     });
 
     // find all the books of category collection
-    app.get("/allBooks", verifyToken, async (req, res) => {
+    app.get("/allBooks", async (req, res) => {
       const result = await categoryCollection.find().toArray();
       res.send(result);
     });
