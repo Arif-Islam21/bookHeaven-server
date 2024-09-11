@@ -8,8 +8,8 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 // middleware
 const corsOptions = {
-  // origin: ["http://localhost:5173", "http://192.168.0.104:5173"],
-  origin: "*",
+  origin: ["http://localhost:5173", "http://192.168.0.104:5173"],
+  // origin: "*",
   credentials: true,
   optionSuccessStatus: 200,
 };
@@ -38,10 +38,14 @@ async function run() {
     const categoryCollection = client.db("bookHeaven").collection("category");
     const borrowCollection = client.db("bookHeaven").collection("borrow");
 
-    // app.post('/jwt', async(req, res) => {
-    //   const email = req.body.email,
-    //   const token = jwt.sign()
-    // })
+    app.post("/jwt", async (req, res) => {
+      const email = req.body.email;
+      console.log(email);
+      // const token = jwt.sign(email, process.env.TOKEN_SECRET_KEY, {
+      //   expiresIn: "1h",
+      // });
+      // console.log(token);
+    });
 
     app.get("/", (req, res) => {
       res.send("Book Is On the way");
